@@ -1,0 +1,4 @@
+clé secrète.key
+__pycache__/
+*.pyc
+stockage mdp.json
