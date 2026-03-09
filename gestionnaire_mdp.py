@@ -224,13 +224,11 @@ class Application_gestionnaire_mdp:
         Ce menu affiche une liste des actions possibles :
         - Ajouter un mot de passe
         - Afficher le répertoire
-        - Chercher un mot de passe
-        - Modifier un mot de passe
-        - Supprimer un mot de passe
+        - Chercher, modifier ou supprimer un mot de passe
         - Quitter
 
-        IMPORTANT : Les boutons pour les autres options (2-6) ont des commentaires TODO
-        car leurs fonctionnalités ne sont pas encore implémentées.
+        IMPORTANT : si vous souhaitez ajoutez des options sur le menu principale,
+        n'oubliez pas de les ajoutez comme choix !
         """
 
         def choix_choisi():
@@ -259,7 +257,7 @@ class Application_gestionnaire_mdp:
                     self.menu_principale.destroy()
                     quit()
 
-                # TODO: add handlers for the other choices later
+                # ajoutez les nouvelles options ici
             else:
                 # Affiche une alerte si rien n'est sélectionné
                 messagebox.showwarning(
@@ -274,7 +272,7 @@ class Application_gestionnaire_mdp:
 
         # Ajoute une sous-question
         sous_titre = tk.Label(self.menu_principale,
-                              text="que souhaitez-vous faire?").pack(pady=5)
+                              text="que souhaitez-vous faire?").pack(pady=10)
 
         # Crée une Listbox (liste sélectionnable) contenant les options
         liste_choix = Listbox(self.menu_principale)
@@ -287,7 +285,7 @@ class Application_gestionnaire_mdp:
 
         # Bouton pour valider le choix
         tk.Button(
-            self.menu_principale, text="Valider", command=lambda: choix_choisi()).pack()
+            self.menu_principale, text="Valider", command=lambda: choix_choisi()).pack(pady=5)
 
         # Affiche ce menu principal au démarrage
         self.menu_principale.pack(fill="both", expand=True)
@@ -295,9 +293,10 @@ class Application_gestionnaire_mdp:
     def creer_menu_mdp(self):
         """Crée le menu de génération/entrée de mot de passe.
 
-        Ce menu offre 2 options :
+        Ce menu offre 3 options :
         1. Générer automatiquement un mot de passe (entrée : longueur)
         2. Entrer manuellement un mot de passe
+        3. Retour au menu principale
 
         Les mots de passe générés ou entrés passent par une vérification avant d'aller au menu de gestion.
         """
@@ -350,7 +349,7 @@ class Application_gestionnaire_mdp:
             self.menu_mdp, text="Générer un mot de passe\n Indiquez la longueur (min 8, max 100)").pack(pady=10)
         longueur = tk.StringVar()  # Variable pour stocker l'entrée utilisateur
         tk.Entry(
-            self.menu_mdp, width=30, textvariable=longueur).pack()
+            self.menu_mdp, width=30, textvariable=longueur).pack(pady=5)
         tk.Button(
             self.menu_mdp, text="Générer",
             command=lambda: generer_click()  # lambda nécessaire pour appeler une fonction
@@ -359,12 +358,16 @@ class Application_gestionnaire_mdp:
         # ===== SECTION 2 : Entrée manuelle =====
         tk.Label(self.menu_mdp, text="Ou\nEntrez un mot de passe").pack(pady=10)
         mdp = tk.StringVar()  # Variable pour stocker le mot de passe manuel
-        tk.Entry(self.menu_mdp, textvariable=mdp).pack()
+        tk.Entry(self.menu_mdp, textvariable=mdp).pack(pady=5)
         tk.Button(
             self.menu_mdp, text="confirmer",
             # mdp.get() récupère la valeur
             command=lambda: eligibilite_mdp(mdp.get().strip(), True)
         ).pack(pady=5)
+
+        # ===== SECTION 3 : Retour au menu =====
+        tk.Button(self.menu_mdp, text="retour",
+                  command=lambda: self.changer_menu(self.menu_principale)).pack(pady=5)
 
     def creer_menu_gestion(self):
         """Crée le menu de gestion/enregistrement du mot de passe.
@@ -387,9 +390,9 @@ class Application_gestionnaire_mdp:
 
         # ===== Entrée du nom du mot de passe =====
         tk.Label(self.menu_gestion,
-                 text="Entrez un nom pour ce mot de passe:").pack(pady=5)
+                 text="Entrez un nom pour ce mot de passe:").pack(pady=10)
         self.nom_mdp_var = tk.StringVar()  # Stocke le nom entré
-        tk.Entry(self.menu_gestion, textvariable=self.nom_mdp_var).pack()
+        tk.Entry(self.menu_gestion, textvariable=self.nom_mdp_var).pack(pady=5)
 
         def enregistrer():
             """Fonction appelée au clic sur 'Enregistrer'.
@@ -455,7 +458,7 @@ class Application_gestionnaire_mdp:
         global historique_mdp
         self.menu_repertoire = tk.Frame(self.root)
         tk.Label(self.menu_repertoire,
-                 text="Historique des mots de passe").pack(pady=5)
+                 text="Historique des mots de passe").pack(pady=10)
 
         # Treeview enfant du frame (pas de self.root)
         liste_mdp = ttk.Treeview(self.menu_repertoire, columns=(
@@ -511,18 +514,17 @@ class Application_gestionnaire_mdp:
                 messagebox.showerror(message="mot de passe invalide")
 
         tk.Label(self.menu_recherche,
-                 text="entrer le nom du mot de passe recherché").pack()
+                 text="entrer le nom du mot de passe recherché").pack(pady=10)
         mdp_cherche = tk.StringVar()
-        tk.Entry(self.menu_recherche, textvariable=mdp_cherche).pack(
-            anchor="center")
+        tk.Entry(self.menu_recherche, textvariable=mdp_cherche).pack(pady=5)
         tk.Button(self.menu_recherche, text="chercher",
-                  command=lambda: verif_présence_nom_mdp(mdp_cherche.get().strip())).pack()
+                  command=lambda: verif_présence_nom_mdp(mdp_cherche.get().strip())).pack(pady=5)
         tk.Button(self.menu_recherche, text="modifier",
-                  command=lambda: modif_mdp(mdp_cherche.get().strip())).pack()
+                  command=lambda: modif_mdp(mdp_cherche.get().strip())).pack(pady=5)
         tk.Button(self.menu_recherche, text="supprimer",
-                  command=lambda: supp_mdp(mdp_cherche.get().strip())).pack()
+                  command=lambda: supp_mdp(mdp_cherche.get().strip())).pack(pady=5)
         tk.Button(self.menu_recherche, text="retour",
-                  command=lambda: self.changer_menu(self.menu_principale)).pack()
+                  command=lambda: self.changer_menu(self.menu_principale)).pack(pady=5)
 
     def creer_menu_modif_mdp(self):
         """Crée le menu de modification d'un mot de passe existant.
@@ -543,7 +545,7 @@ class Application_gestionnaire_mdp:
 
         self.menu_modif_mdp = tk.Frame(self.root)
         tk.Label(self.menu_modif_mdp,
-                 text=f"entrez le nouveau mdp pour {self.nom} \n longueur min 8 max 100").pack()
+                 text=f"entrez le nouveau mdp pour {self.nom} \n longueur min 8 max 100").pack(pady=10)
         nouv_mdp = tk.StringVar()
         tk.Entry(self.menu_modif_mdp, textvariable=nouv_mdp).pack()
         tk.Button(self.menu_modif_mdp, text="enregistrer",
