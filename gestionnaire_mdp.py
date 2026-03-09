@@ -18,7 +18,6 @@ Structure :
 
 import secrets
 import string
-from pprint import pprint
 import json
 from cryptography.fernet import Fernet
 import tkinter as tk
@@ -257,6 +256,7 @@ class Application_gestionnaire_mdp:
                 elif selection == "Quitter":
                     self.enregistrer()
                     messagebox.showinfo(message="Au revoir !")
+                    self.menu_principale.destroy()
                     quit()
 
                 # TODO: add handlers for the other choices later
