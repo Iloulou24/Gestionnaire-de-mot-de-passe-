@@ -2,3 +2,5 @@ clé secrète.key
 __pycache__/
 *.pyc
 stockage mdp.json
+environnement_virtuel_gestionnaire_mdp
+.vscode
