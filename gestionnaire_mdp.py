@@ -17,6 +17,7 @@ Structure :
 """
 
 import secrets
+import pyperclip
 import string
 import json
 from cryptography.fernet import Fernet
@@ -513,6 +514,15 @@ class Application_gestionnaire_mdp:
             else:
                 messagebox.showerror(message="mot de passe invalide")
 
+        def copy_mdp(nom):
+            if nom in historique_mdp:
+                self.nom = nom
+                pyperclip.copy(historique_mdp[self.nom])
+                messagebox.showinfo(message="mot de passe copié")
+                self.changer_menu(self.menu_principale)
+            else:
+                messagebox.showerror(message="mot de passe invalide")
+
         tk.Label(self.menu_recherche,
                  text="entrer le nom du mot de passe recherché").pack(pady=10)
         mdp_cherche = tk.StringVar()
@@ -523,6 +533,8 @@ class Application_gestionnaire_mdp:
                   command=lambda: modif_mdp(mdp_cherche.get().strip())).pack(pady=5)
         tk.Button(self.menu_recherche, text="supprimer",
                   command=lambda: supp_mdp(mdp_cherche.get().strip())).pack(pady=5)
+        tk.Button(self.menu_recherche,
+                  text="copier", command=lambda: copy_mdp(mdp_cherche.get().strip())).pack(pady=5)
         tk.Button(self.menu_recherche, text="retour",
                   command=lambda: self.changer_menu(self.menu_principale)).pack(pady=5)
 
