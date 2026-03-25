@@ -17,7 +17,7 @@ Structure :
 """
 
 import secrets
-import pyperclip
+from pyperclip import copy
 import string
 import json
 from cryptography.fernet import Fernet
@@ -453,10 +453,20 @@ class Application_gestionnaire_mdp:
         Ce menu affiche tous les mots de passe stockés dans un Treeview.
         Il est recréé à chaque accès pour refléter les modifications récentes.
         """
+        def copier():
+            if not liste_mdp.selection():
+                messagebox.showwarning(message="veuillez choisir un code")
+
+            else:
+                selection = liste_mdp.selection()
+                copy(historique_mdp[self.dico_mdp_liste[selection[0]]])
+                messagebox.showinfo(message="mot de passe copié")
+
         if hasattr(self, 'menu_repertoire'):
             self.menu_repertoire.destroy()
 
         global historique_mdp
+        self.dico_mdp_liste = {}
         self.menu_repertoire = tk.Frame(self.root)
         tk.Label(self.menu_repertoire,
                  text="Historique des mots de passe").pack(pady=10)
@@ -471,7 +481,11 @@ class Application_gestionnaire_mdp:
         # Parcours correct du dictionnaire
         for nom, mdp in historique_mdp.items():
             # Affiche le mot de passe en clair dans le Treeview
-            liste_mdp.insert("", "end", values=(nom, mdp))
+            id_ligne = liste_mdp.insert("", "end", values=(nom, "*"*len(mdp)))
+            self.dico_mdp_liste[id_ligne] = nom
+
+        tk.Button(self.menu_repertoire, text="Copier",
+                  command=lambda: copier()).pack(pady=5)
 
         tk.Button(self.menu_repertoire, text="Retour", command=lambda: self.changer_menu(
             self.menu_principale)).pack(pady=5)
@@ -517,7 +531,7 @@ class Application_gestionnaire_mdp:
         def copy_mdp(nom):
             if nom in historique_mdp:
                 self.nom = nom
-                pyperclip.copy(historique_mdp[self.nom])
+                copy(historique_mdp[self.nom])
                 messagebox.showinfo(message="mot de passe copié")
                 self.changer_menu(self.menu_principale)
             else:
