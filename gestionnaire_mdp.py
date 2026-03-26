@@ -56,7 +56,7 @@ except (FileNotFoundError, json.JSONDecodeError, Exception):
 # Ces fonctions sont appelées par différentes parties du programme
 
 
-def generer_mdp(longueur):
+def generer_mdp(longueur: int | str) -> tuple[str, bool]:
     """Génère un mot de passe aléatoire de la longueur spécifiée.
 
     Args:
@@ -80,7 +80,7 @@ def generer_mdp(longueur):
     return mdp, True
 
 
-def verfier_mot_de_passe(mot_de_passe):
+def verfier_mot_de_passe(mot_de_passe: str) -> bool:
     """Vérifie si le mot de passe est à la norme (8 caractères minimum et 100 caractères maximum).
 
     Args:
@@ -91,7 +91,7 @@ def verfier_mot_de_passe(mot_de_passe):
     return (8 <= len(str(mot_de_passe)) <= 100)
 
 
-def créer_un_mot_de_passe():
+def créer_un_mot_de_passe() -> tuple[str, bool]:
     while True:
         try:
             input_length = int(input(
@@ -103,7 +103,7 @@ def créer_un_mot_de_passe():
     return (generer_mdp(input_length))
 
 
-def sauvegarder_mot_de_passe(nom, mot_de_passe, historique):
+def sauvegarder_mot_de_passe(nom: str, mot_de_passe, historique: dict) -> dict:
     """Sauvegarde le mot de passe dans le répertoire des mots de passe.
     Args:
         mot_de_passe (str): Le mot de passe à sauvegarder.
@@ -113,7 +113,7 @@ def sauvegarder_mot_de_passe(nom, mot_de_passe, historique):
     return historique
 
 
-def chercher_mot_de_passe(nom, historique):
+def chercher_mot_de_passe(nom: str, historique: dict) -> dict | str:
     """Cherche un mot de passe dans le répertoire des mots de passe.
     Args:
         nom (str): Le nom du mot de passe à chercher.
