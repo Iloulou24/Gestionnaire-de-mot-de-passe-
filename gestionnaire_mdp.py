@@ -16,14 +16,14 @@ Structure :
 - Classe Application_gestionnaire_mdp pour l'interface graphique
 """
 
-import secrets
-from pyperclip import copy
-import string
 import json
-from cryptography.fernet import Fernet
+import secrets
+import string
 import tkinter as tk
 from tkinter import Listbox, messagebox, ttk
 
+from cryptography.fernet import Fernet
+from pyperclip import copy
 
 # ======================== VARIABLES GLOBALES IMPORTANTES ========================
 # Ces variables sont accessibles dans tout le programme et servent à stocker les données
@@ -68,15 +68,24 @@ def generer_mdp(longueur: int | str) -> tuple[str, bool]:
         if isinstance(longueur, str) and longueur.isdigit():
             longueur = int(longueur)
         else:
-            return 'entrez des nombres entiers valides pour la longueur et le nombre de mots de passe.', False
+            return (
+                "entrez des nombres entiers valides pour la longueur et le nombre de mots de passe.",
+                False,
+            )
     if longueur <= 0:
-        return 'un mot de passe ne peut pas avoir une longueur négative ou nulle.', False
+        return (
+            "un mot de passe ne peut pas avoir une longueur négative ou nulle.",
+            False,
+        )
     if longueur > 100:
-        return 'un mot de passe ne peut pas dépasser 100 caractères.', False
+        return "un mot de passe ne peut pas dépasser 100 caractères.", False
     if longueur < 8:
-        return 'le mot de passe est trop court. Il doit contenir au moins 8 caractères.', False
-    caracters = string.ascii_letters+string.digits+string.punctuation
-    mdp = ''.join(secrets.choice(caracters) for j in range(longueur))
+        return (
+            "le mot de passe est trop court. Il doit contenir au moins 8 caractères.",
+            False,
+        )
+    caracters = string.ascii_letters + string.digits + string.punctuation
+    mdp = "".join(secrets.choice(caracters) for j in range(longueur))
     return mdp, True
 
 
@@ -88,19 +97,24 @@ def verfier_mot_de_passe(mot_de_passe: str) -> bool:
     Returns:
         bool: True si le mot de passe est à la norme, False sinon.
     """
-    return (8 <= len(str(mot_de_passe)) <= 100)
+    return 8 <= len(str(mot_de_passe)) <= 100
 
 
 def créer_un_mot_de_passe() -> tuple[str, bool]:
     while True:
         try:
-            input_length = int(input(
-                "Entrez la longueur du mot de passe (supérieure ou égale à 8 et inférieure ou égale à 100): "))
+            input_length = int(
+                input(
+                    "Entrez la longueur du mot de passe (supérieure ou égale à 8 et inférieure ou égale à 100): "
+                )
+            )
             break
 
         except ValueError:
-            print("Entrée invalide. Veuillez entrer des nombres entiers pour la longueur et le nombre de mots de passe.")
-    return (generer_mdp(input_length))
+            print(
+                "Entrée invalide. Veuillez entrer des nombres entiers pour la longueur et le nombre de mots de passe."
+            )
+    return generer_mdp(input_length)
 
 
 def sauvegarder_mot_de_passe(nom: str, mot_de_passe, historique: dict) -> dict:
@@ -184,22 +198,22 @@ class Application_gestionnaire_mdp:
         3. frame.pack() affiche le nouveau frame avec fill="both" (remplit toute la fenêtre)
         """
         # Cache le menu principal s'il existe
-        if hasattr(self, 'menu_principale'):
+        if hasattr(self, "menu_principale"):
             self.menu_principale.pack_forget()
 
         # Cache le menu de génération s'il existe
-        if hasattr(self, 'menu_mdp'):
+        if hasattr(self, "menu_mdp"):
             self.menu_mdp.pack_forget()
 
         # Cache le menu de gestion s'il existe
-        if hasattr(self, 'menu_gestion'):
+        if hasattr(self, "menu_gestion"):
             self.menu_gestion.pack_forget()
 
         # note: attribute name must match exactly the one set in creer_menu_repertoire
-        if hasattr(self, 'menu_repertoire'):
+        if hasattr(self, "menu_repertoire"):
             self.menu_repertoire.pack_forget()
 
-        if hasattr(self, 'menu_recherche'):
+        if hasattr(self, "menu_recherche"):
             self.menu_recherche.pack_forget()
 
         if hasattr(self, "menu_modif_mdp"):
@@ -240,7 +254,7 @@ class Application_gestionnaire_mdp:
             # Vérifie qu'une option est sélectionnée (curselection() retourne un tuple vide si rien)
             if liste_choix.curselection():
                 # Récupère le texte de l'option sélectionnée
-                selection = liste_choix.get('active')
+                selection = liste_choix.get("active")
 
                 # Si l'utilisateur a choisi "Ajouter un mot de passe"
                 if selection == "Ajouter un mot de passe":
@@ -250,7 +264,10 @@ class Application_gestionnaire_mdp:
                     # Recréer le menu pour refléter les changements
                     self.creer_menu_repertoire()
                     self.changer_menu(self.menu_repertoire)
-                elif selection == "Chercher, modifier, ou supprimer un mot de passe dans le répertoire":
+                elif (
+                    selection
+                    == "Chercher, modifier, ou supprimer un mot de passe dans le répertoire"
+                ):
                     self.changer_menu(self.menu_recherche)
                 elif selection == "Quitter":
                     self.enregistrer()
@@ -262,31 +279,35 @@ class Application_gestionnaire_mdp:
             else:
                 # Affiche une alerte si rien n'est sélectionné
                 messagebox.showwarning(
-                    "Avertissement", "Veuillez choisir un élément dans la liste.")
+                    "Avertissement", "Veuillez choisir un élément dans la liste."
+                )
 
         # Crée un nouveau frame (conteneur) pour ce menu
         self.menu_principale = tk.Frame(self.root)
 
         # Ajoute le titre du menu
         tk.Label(
-            self.menu_principale, text="Bienvenue dans le gestionnaire de mots de passe!").pack(pady=10)
+            self.menu_principale,
+            text="Bienvenue dans le gestionnaire de mots de passe!",
+        ).pack(pady=10)
 
         # Ajoute une sous-question
-        sous_titre = tk.Label(self.menu_principale,
-                              text="que souhaitez-vous faire?").pack(pady=10)
+        tk.Label(self.menu_principale, text="que souhaitez-vous faire?").pack(pady=10)
 
         # Crée une Listbox (liste sélectionnable) contenant les options
         liste_choix = Listbox(self.menu_principale)
         liste_choix.insert(1, "Ajouter un mot de passe")
         liste_choix.insert(2, "Afficher le répertoire des mots de passe")
         liste_choix.insert(
-            3, "Chercher, modifier, ou supprimer un mot de passe dans le répertoire")
+            3, "Chercher, modifier, ou supprimer un mot de passe dans le répertoire"
+        )
         liste_choix.insert(4, "Quitter")
         liste_choix.pack(ipadx=200)  # ipadx ajoute du padding horizontal
 
         # Bouton pour valider le choix
         tk.Button(
-            self.menu_principale, text="Valider", command=lambda: choix_choisi()).pack(pady=5)
+            self.menu_principale, text="Valider", command=lambda: choix_choisi()
+        ).pack(pady=5)
 
         # Affiche ce menu principal au démarrage
         self.menu_principale.pack(fill="both", expand=True)
@@ -339,21 +360,25 @@ class Application_gestionnaire_mdp:
                     self.changer_menu(self.menu_gestion)
                 else:
                     messagebox.showwarning(
-                        "Attention", "Le mot de passe n'est pas valide")
+                        "Attention", "Le mot de passe n'est pas valide"
+                    )
 
             else:
-                messagebox.showwarning(
-                    "Avertissement", "L'entrée n'est pas valide")
+                messagebox.showwarning("Avertissement", "L'entrée n'est pas valide")
 
         # ===== SECTION 1 : Génération automatique =====
         tk.Label(
-            self.menu_mdp, text="Générer un mot de passe\n Indiquez la longueur (min 8, max 100)").pack(pady=10)
+            self.menu_mdp,
+            text="Générer un mot de passe\n Indiquez la longueur (min 8, max 100)",
+        ).pack(pady=10)
         longueur = tk.StringVar()  # Variable pour stocker l'entrée utilisateur
-        tk.Entry(
-            self.menu_mdp, width=30, textvariable=longueur).pack(pady=5)
+        tk.Entry(self.menu_mdp, width=30, textvariable=longueur).pack(pady=5)
         tk.Button(
-            self.menu_mdp, text="Générer",
-            command=lambda: generer_click()  # lambda nécessaire pour appeler une fonction
+            self.menu_mdp,
+            text="Générer",
+            command=lambda: (
+                generer_click()
+            ),  # lambda nécessaire pour appeler une fonction
         ).pack(pady=5)
 
         # ===== SECTION 2 : Entrée manuelle =====
@@ -361,14 +386,18 @@ class Application_gestionnaire_mdp:
         mdp = tk.StringVar()  # Variable pour stocker le mot de passe manuel
         tk.Entry(self.menu_mdp, textvariable=mdp).pack(pady=5)
         tk.Button(
-            self.menu_mdp, text="confirmer",
+            self.menu_mdp,
+            text="confirmer",
             # mdp.get() récupère la valeur
-            command=lambda: eligibilite_mdp(mdp.get().strip(), True)
+            command=lambda: eligibilite_mdp(mdp.get().strip(), True),
         ).pack(pady=5)
 
         # ===== SECTION 3 : Retour au menu =====
-        tk.Button(self.menu_mdp, text="retour",
-                  command=lambda: self.changer_menu(self.menu_principale)).pack(pady=5)
+        tk.Button(
+            self.menu_mdp,
+            text="retour",
+            command=lambda: self.changer_menu(self.menu_principale),
+        ).pack(pady=5)
 
     def creer_menu_gestion(self):
         """Crée le menu de gestion/enregistrement du mot de passe.
@@ -376,7 +405,7 @@ class Application_gestionnaire_mdp:
         Ce menu s'affiche APRÈS que l'utilisateur ait généré ou validé un mot de passe.
         Il permet d'enregistrer le mot de passe sous un nom pour le répertoire.
 
-        IMPORTANT : 
+        IMPORTANT :
         - self.mdp_actuel contient le mot de passe en attente
         - self.nom_mdp_var sauvegarde le nom entré par l'utilisateur
         """
@@ -386,12 +415,14 @@ class Application_gestionnaire_mdp:
         # ===== Label pour afficher le mot de passe généré =====
         # Ce label sera mis à jour par actualiser_menu_gestion()
         self.label_mdp_affiche = tk.Label(
-            self.menu_gestion, text="", font=("Arial", 10))
+            self.menu_gestion, text="", font=("Arial", 10)
+        )
         self.label_mdp_affiche.pack(pady=10)
 
         # ===== Entrée du nom du mot de passe =====
-        tk.Label(self.menu_gestion,
-                 text="Entrez un nom pour ce mot de passe:").pack(pady=10)
+        tk.Label(self.menu_gestion, text="Entrez un nom pour ce mot de passe:").pack(
+            pady=10
+        )
         self.nom_mdp_var = tk.StringVar()  # Stocke le nom entré
         tk.Entry(self.menu_gestion, textvariable=self.nom_mdp_var).pack(pady=5)
 
@@ -407,7 +438,9 @@ class Application_gestionnaire_mdp:
             6. Retourne au menu principal
             """
             global historique_mdp
-            nom = self.nom_mdp_var.get().strip()  # .strip() enlève les espaces avant/après
+            nom = (
+                self.nom_mdp_var.get().strip()
+            )  # .strip() enlève les espaces avant/après
             if not nom:
                 # Affiche un avertissement si le nom est vide
                 messagebox.showwarning("Attention", "Veuillez entrer un nom.")
@@ -419,7 +452,8 @@ class Application_gestionnaire_mdp:
 
             # Affiche un message de confirmation
             messagebox.showinfo(
-                "Succès", f"Mot de passe '{nom}' enregistré avec succès!")
+                "Succès", f"Mot de passe '{nom}' enregistré avec succès!"
+            )
 
             # Réinitialise le champ de texte
             self.nom_mdp_var.set("")
@@ -428,10 +462,14 @@ class Application_gestionnaire_mdp:
             self.changer_menu(self.menu_principale)
 
         # ===== Boutons d'action =====
-        tk.Button(self.menu_gestion, text="Enregistrer",
-                  command=enregistrer).pack(pady=5)
-        tk.Button(self.menu_gestion, text="Retour",
-                  command=lambda: self.changer_menu(self.menu_mdp)).pack(pady=5)
+        tk.Button(self.menu_gestion, text="Enregistrer", command=enregistrer).pack(
+            pady=5
+        )
+        tk.Button(
+            self.menu_gestion,
+            text="Retour",
+            command=lambda: self.changer_menu(self.menu_mdp),
+        ).pack(pady=5)
 
     def actualiser_menu_gestion(self):
         """Actualise l'affichage du mot de passe généré.
@@ -444,8 +482,7 @@ class Application_gestionnaire_mdp:
         """
         # Utilise .config() pour modifier le texte d'un label APRÈS sa création
         # (plus efficace que de recréer le label à chaque fois)
-        self.label_mdp_affiche.config(
-            text=f"Mot de passe :\n{self.mdp_actuel}")
+        self.label_mdp_affiche.config(text=f"Mot de passe :\n{self.mdp_actuel}")
 
     def creer_menu_repertoire(self):
         """Crée et affiche le menu du répertoire des mots de passe.
@@ -453,6 +490,7 @@ class Application_gestionnaire_mdp:
         Ce menu affiche tous les mots de passe stockés dans un Treeview.
         Il est recréé à chaque accès pour refléter les modifications récentes.
         """
+
         def copier():
             if not liste_mdp.selection():
                 messagebox.showwarning(message="veuillez choisir un code")
@@ -462,18 +500,20 @@ class Application_gestionnaire_mdp:
                 copy(historique_mdp[self.dico_mdp_liste[selection[0]]])
                 messagebox.showinfo(message="mot de passe copié")
 
-        if hasattr(self, 'menu_repertoire'):
+        if hasattr(self, "menu_repertoire"):
             self.menu_repertoire.destroy()
 
         global historique_mdp
         self.dico_mdp_liste = {}
         self.menu_repertoire = tk.Frame(self.root)
-        tk.Label(self.menu_repertoire,
-                 text="Historique des mots de passe").pack(pady=10)
+        tk.Label(self.menu_repertoire, text="Historique des mots de passe").pack(
+            pady=10
+        )
 
         # Treeview enfant du frame (pas de self.root)
-        liste_mdp = ttk.Treeview(self.menu_repertoire, columns=(
-            "Nom", "Mot de passe"), show="headings")
+        liste_mdp = ttk.Treeview(
+            self.menu_repertoire, columns=("Nom", "Mot de passe"), show="headings"
+        )
         liste_mdp.heading("Nom", text="Nom")
         liste_mdp.heading("Mot de passe", text="Mot de passe")
         liste_mdp.pack(fill="both", expand=True, padx=5, pady=5)
@@ -481,14 +521,18 @@ class Application_gestionnaire_mdp:
         # Parcours correct du dictionnaire
         for nom, mdp in historique_mdp.items():
             # Affiche le mot de passe en clair dans le Treeview
-            id_ligne = liste_mdp.insert("", "end", values=(nom, "*"*len(mdp)))
+            id_ligne = liste_mdp.insert("", "end", values=(nom, "*" * len(mdp)))
             self.dico_mdp_liste[id_ligne] = nom
 
-        tk.Button(self.menu_repertoire, text="Copier",
-                  command=lambda: copier()).pack(pady=5)
+        tk.Button(self.menu_repertoire, text="Copier", command=lambda: copier()).pack(
+            pady=5
+        )
 
-        tk.Button(self.menu_repertoire, text="Retour", command=lambda: self.changer_menu(
-            self.menu_principale)).pack(pady=5)
+        tk.Button(
+            self.menu_repertoire,
+            text="Retour",
+            command=lambda: self.changer_menu(self.menu_principale),
+        ).pack(pady=5)
 
     def creer_menu_recherche(self):
         """Crée le menu de recherche, modification et suppression de mots de passe.
@@ -502,11 +546,13 @@ class Application_gestionnaire_mdp:
             global historique_mdp
             if nom in historique_mdp:
                 messagebox.showinfo(
-                    message=f"Le mot de passe de {nom} est {historique_mdp[nom]}")
+                    message=f"Le mot de passe de {nom} est {historique_mdp[nom]}"
+                )
                 return True
             else:
                 messagebox.showinfo(
-                    message="Aucun mot de passe n'est enregistré sous ce nom")
+                    message="Aucun mot de passe n'est enregistré sous ce nom"
+                )
                 return False
 
         def modif_mdp(nom):
@@ -537,20 +583,36 @@ class Application_gestionnaire_mdp:
             else:
                 messagebox.showerror(message="mot de passe invalide")
 
-        tk.Label(self.menu_recherche,
-                 text="entrer le nom du mot de passe recherché").pack(pady=10)
+        tk.Label(
+            self.menu_recherche, text="entrer le nom du mot de passe recherché"
+        ).pack(pady=10)
         mdp_cherche = tk.StringVar()
         tk.Entry(self.menu_recherche, textvariable=mdp_cherche).pack(pady=5)
-        tk.Button(self.menu_recherche, text="chercher",
-                  command=lambda: verif_présence_nom_mdp(mdp_cherche.get().strip())).pack(pady=5)
-        tk.Button(self.menu_recherche, text="modifier",
-                  command=lambda: modif_mdp(mdp_cherche.get().strip())).pack(pady=5)
-        tk.Button(self.menu_recherche, text="supprimer",
-                  command=lambda: supp_mdp(mdp_cherche.get().strip())).pack(pady=5)
-        tk.Button(self.menu_recherche,
-                  text="copier", command=lambda: copy_mdp(mdp_cherche.get().strip())).pack(pady=5)
-        tk.Button(self.menu_recherche, text="retour",
-                  command=lambda: self.changer_menu(self.menu_principale)).pack(pady=5)
+        tk.Button(
+            self.menu_recherche,
+            text="chercher",
+            command=lambda: verif_présence_nom_mdp(mdp_cherche.get().strip()),
+        ).pack(pady=5)
+        tk.Button(
+            self.menu_recherche,
+            text="modifier",
+            command=lambda: modif_mdp(mdp_cherche.get().strip()),
+        ).pack(pady=5)
+        tk.Button(
+            self.menu_recherche,
+            text="supprimer",
+            command=lambda: supp_mdp(mdp_cherche.get().strip()),
+        ).pack(pady=5)
+        tk.Button(
+            self.menu_recherche,
+            text="copier",
+            command=lambda: copy_mdp(mdp_cherche.get().strip()),
+        ).pack(pady=5)
+        tk.Button(
+            self.menu_recherche,
+            text="retour",
+            command=lambda: self.changer_menu(self.menu_principale),
+        ).pack(pady=5)
 
     def creer_menu_modif_mdp(self):
         """Crée le menu de modification d'un mot de passe existant.
@@ -563,19 +625,23 @@ class Application_gestionnaire_mdp:
                 global historique_mdp
                 historique_mdp[self.nom] = nouv_mdp
                 self.enregistrer()  # Sauvegarde après modification
-                messagebox.showinfo(
-                    message="mot de passe enregistré avec succès")
+                messagebox.showinfo(message="mot de passe enregistré avec succès")
                 self.changer_menu(self.menu_principale)
             else:
                 messagebox.showinfo(message="mot de passe invalide")
 
         self.menu_modif_mdp = tk.Frame(self.root)
-        tk.Label(self.menu_modif_mdp,
-                 text=f"entrez le nouveau mdp pour {self.nom} \n longueur min 8 max 100").pack(pady=10)
+        tk.Label(
+            self.menu_modif_mdp,
+            text=f"entrez le nouveau mdp pour {self.nom} \n longueur min 8 max 100",
+        ).pack(pady=10)
         nouv_mdp = tk.StringVar()
         tk.Entry(self.menu_modif_mdp, textvariable=nouv_mdp).pack()
-        tk.Button(self.menu_modif_mdp, text="enregistrer",
-                  command=lambda: modification_mdp(nouv_mdp.get().strip())).pack()
+        tk.Button(
+            self.menu_modif_mdp,
+            text="enregistrer",
+            command=lambda: modification_mdp(nouv_mdp.get().strip()),
+        ).pack()
 
 
 # ======================== LANCEMENT DE L'APPLICATION ========================
@@ -583,5 +649,5 @@ class Application_gestionnaire_mdp:
 Instanciation de la classe principale pour démarrer l'application.
 Cela crée la fenêtre Tkinter et lance la boucle d'événements.
 """
-
-Application_gestionnaire_mdp()
+if __name__ == "__main__":
+    Application_gestionnaire_mdp()
